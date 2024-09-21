@@ -16,7 +16,6 @@ image = (
 app = modal.App("cuda-substrings-ci", image=image)
 
 # mount: add local files to the remote container
-code = modal.Mount.from_local_dir(ROOT_PATH / "src", remote_path="/root/src")
 tests = modal.Mount.from_local_dir(ROOT_PATH / "tests", remote_path="/root/tests")
 perf_volume = modal.Volume.from_name("fft-perf", create_if_missing=True)
 volume_dir = Path("/root/perf")
