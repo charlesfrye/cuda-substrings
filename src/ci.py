@@ -13,7 +13,7 @@ image = (
     .copy_local_file("pytest.ini")
 )
 
-app = modal.App("ci-testing", image=image)
+app = modal.App("cuda-substrings-ci", image=image)
 
 # mount: add local files to the remote container
 code = modal.Mount.from_local_dir(ROOT_PATH / "src", remote_path="/root/src")
@@ -32,7 +32,7 @@ def pytest(impl: str = None):
 
 
 @app.function(gpu="h100", mounts=[tests], volumes={volume_dir: perf_volume})
-def perftest(impl: str = None):
+def benchmark(impl: str = None):
     import subprocess
 
     impl = impl or "simple"
@@ -54,7 +54,7 @@ def perftest(impl: str = None):
 
 @app.local_entrypoint()
 def main(impl: str = None):
-    bytes_svg = perftest.remote(impl)
+    bytes_svg = benchmark.remote(impl)
     with open(Path("/tmp") / f"{impl}-results.svg", "wb") as f:
         f.write(bytes_svg)
 
