@@ -1,0 +1,6 @@
+-r requirements.txt
+modal
+pytest
+pytest-benchmark
+py-spy
+ruff
