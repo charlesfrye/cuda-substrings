@@ -16,6 +16,14 @@ and a CuPy implementation that runs on NVIDIA GPUs.
 The CuPy implementation was written as part of the
 [CUDA MODE IRL hackathon](https://events.accel.com/cudamode).
 
+The figure below shows the CuPy implementation's performance
+compared to the naive Python implementation,
+demonstrating the superior scaling of the FFT approach.
+
+![results-figure](./figure.png)
+
+## Details on Performance
+
 In our testing, on a beefy H100 node on Modal,
 the base implementation achieved ~50 operations per second (OPS) as measured by `pytest-benchmark`,
 for input strings of size `65_536 == 2 ** 16`
