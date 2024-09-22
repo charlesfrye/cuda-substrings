@@ -8,6 +8,22 @@ def pytest_addoption(parser):
         default="simple",
         help="Implementation to use: simple, numpy-fft, cuda-fft",
     )
+    parser.addoption(
+        "--run-hard", action="store_true", default=False, help="run hard tests"
+    )
+
+
+def pytest_configure(config):
+    config.addinivalue_line("markers", "slow: mark test as slow")
+
+
+def pytest_collection_modifyitems(config, items):
+    if config.getoption("--run-hard"):
+        return
+    skip_slow = pytest.mark.skip(reason="need --run-hard option to run")
+    for item in items:
+        if "hard" in item.keywords:
+            item.add_marker(skip_slow)
 
 
 @pytest.fixture

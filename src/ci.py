@@ -22,11 +22,15 @@ volume_dir = Path("/root/perf")
 
 
 @app.function(gpu="any", mounts=[tests])
-def pytest(impl: str = None):
+def pytest(impl: str = None, run_hard: bool = False):
     import subprocess
 
     subprocess.run(
-        ["pytest", "-vs"] + ["--impl", impl] if impl else [], check=True, cwd="/root"
+        ["pytest", "-vs"]
+        + (["--impl", impl] if impl else [])
+        + (["--run-hard"] if run_hard else []),
+        check=True,
+        cwd="/root",
     )
 
 

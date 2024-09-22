@@ -1,10 +1,13 @@
 """These are tests that an FP32 FFT implementation should fail."""
 
+import pytest
+
 
 def make_high_unicode_code_points_text():
     return "".join([chr(i) for i in range(20_000, 25_000)])
 
 
+@pytest.mark.hard
 def test_large_encodings(implementation):
     large_text = make_high_unicode_code_points_text()
     large_pattern = "." + large_text[1:-1] + "."
@@ -13,6 +16,7 @@ def test_large_encodings(implementation):
     assert result == [0]
 
 
+@pytest.mark.hard
 def test_hangul_matching(implementation):
     """이 테스트는 부분 문자열 매칭이 한글 문자에서 작동하는지 확인합니다.
 
@@ -35,6 +39,7 @@ def test_hangul_matching(implementation):
     assert result == [424]
 
 
+@pytest.mark.hard
 def test_emoji_matching(implementation):
     emoji_text = "".join([chr(i) for i in range(128_512, 128_516)])
     emoji_pattern = emoji_text[1:-1] + "."
