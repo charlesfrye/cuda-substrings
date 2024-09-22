@@ -30,7 +30,9 @@ def pytest(impl: str = None):
     )
 
 
-@app.function(gpu="h100", mounts=[tests], volumes={volume_dir: perf_volume})
+@app.function(
+    gpu="h100", mounts=[tests], volumes={volume_dir: perf_volume}, cloud="oci"
+)
 def benchmark(impl: str = None):
     import subprocess
 

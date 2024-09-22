@@ -1,8 +1,8 @@
 import cupy as cp
 
 
-def char_to_num(c):
-    return ord(c) if c != "." else 0
+def char_to_num(s):
+    return cp.array([ord(c) if c != "." else 0 for c in s])
 
 
 def checkcubesum(pattern_n):
@@ -37,7 +37,7 @@ def find_substrings(text: str, pattern: str) -> list[int]:
         return list(range(text_len))
 
     # convert pattern to numeric encoding
-    pattern_n = cp.array([char_to_num(c) for c in pattern])
+    pattern_n = char_to_num(pattern)
 
     # compute p^2 and sum(p^3) aka checkcubesum
     pattern_num_squared = pattern_n**2
@@ -47,7 +47,7 @@ def find_substrings(text: str, pattern: str) -> list[int]:
     pattern_reversed = pattern_n[::-1]
     pattern_reversed_squared = pattern_num_squared[::-1]
 
-    text_num = cp.array([char_to_num(c) for c in text])
+    text_num = char_to_num(text)
     text_num_squared = text_num**2
 
     matches, size = [], pattern_len
