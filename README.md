@@ -17,7 +17,7 @@ The CuPy implementation was written as part of the
 [CUDA MODE IRL hackathon](https://events.accel.com/cudamode).
 
 In our testing, on a beefy H100 node on Modal,
-the base implementation achieved ~50 OPS as measured by `pytest-benchmark`
+the base implementation achieved ~50 operations per second (OPS) as measured by `pytest-benchmark`,
 for input strings of size `65_536 == 2 ** 16`
 (roughly the length of a Shakespeare play).
 with single matches of size roughly `4_096 == 2 ** 12`.
@@ -31,6 +31,7 @@ or ~80 OPS.
 Profiling with `py-spy` showed that the CuPy implementation's
 runtime was dominated by overhead
 from the conversion of Python strings into ints for the FFT.
+
 Reading the string into CuPy as a `utf32-le` encoded buffer relieved this bottleneck
 and boosed the OPS to >500, or >10x the speed of the base implementation.
 
