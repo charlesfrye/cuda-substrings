@@ -37,9 +37,10 @@ and boosed the OPS to >500, or >10x the speed of the base implementation.
 
 For larger strings, the superior asymptotics of the FFT-based approach
 become more apparent.
-The base implementation's OPS drops to <4 for input strings of size `1_048_576 == 2 ** 20`, a ~10x slowdown for a 4x increase in input size.
+The base implementation's OPS drops to <4 for input strings of size `1_048_576 == 2 ** 20`
+and match patterns of length `65_536 == 2**16`, which is a ~10x slowdown for a 4x increase in input size.
 That's a string roughly the length of the _Harry Potter and the Deathly Hallows_.
-Meanwhile, the CuPy implementation's OPS drops to ~250, a 2x slowdown for a 4x increase in input size.
+Meanwhile, the CuPy implementation's OPS drops only to ~250, a 2x slowdown for a 4x increase in input size.
 
 
 ## Usage
