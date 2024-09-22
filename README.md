@@ -1,4 +1,4 @@
-# Substring Matching with Fast Fourier Transforms in O(n log n)
+# Substring Matching on GPUs with Fast Fourier Transforms in O(n log n)
 
 This repo demonstrates how to use FFTs to perform substring matching in O(n log n) time.
 It is based on the algorithm in
@@ -13,6 +13,8 @@ is in pure Python.
 
 This repo also includes a NumPy implementation
 and a CuPy implementation that runs on NVIDIA GPUs.
+The CuPy implementation was written as part of the
+[CUDA MODE IRL hackathon](https://events.accel.com/cudamode).
 
 In our testing, on a beefy H100 node on Modal,
 the base implementation achieved ~50 OPS as measured by `pytest-benchmark`
