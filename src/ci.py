@@ -37,18 +37,17 @@ def pytest(impl: str = None, run_hard: bool = False):
 @app.function(
     gpu="h100", mounts=[tests], volumes={volume_dir: perf_volume}, cloud="oci"
 )
-def benchmark(impl: str = None, strlen: int = None):
+def benchmark(strlen: int = None, impl: str = None):
     import os
     import subprocess
 
     impl = impl or "simple"
-    output_dir = volume_dir / impl
+    strlen = strlen or 2**20
+    output_dir = volume_dir / impl / str(strlen).zfill(10)
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    strlen = strlen or 2**20
-
     subprocess.run(
-        ["py-spy", "record", "-o", output_dir / f"{strlen}-trace.svg", "--"]
+        ["py-spy", "record", "-o", output_dir / "trace.svg", "--"]
         + ["pytest"]
         + ["--impl", impl]
         + ["--benchmark-enable"]
@@ -59,13 +58,26 @@ def benchmark(impl: str = None, strlen: int = None):
         env=os.environ | {"CUDA_SS_STRINGLEN": str(strlen)},
     )
 
-    return Path(output_dir / "results.svg").read_bytes()
+    return Path(output_dir / "trace.svg").read_bytes()
 
 
 @app.local_entrypoint()
-def main(impl: str = None, strlen: int = None):
-    bytes_svg = benchmark.remote(impl, strlen)
-    with open(Path("/tmp") / f"{impl}-{strlen}-results.svg", "wb") as f:
-        f.write(bytes_svg)
+def main(impl: str = None, strlen_min: int = None, strlen_max: int = None):
+    if strlen_min is None:
+        strlen_min = 10
+    if strlen_max is None:
+        strlen_max = 20
+    if impl is None:
+        impl = "simple"
+    strlens = [2**strlen for strlen in range(strlen_min, strlen_max + 1)]
+    results = []
+    for strlen in strlens:
+        handle = benchmark.spawn(strlen=strlen, impl=impl)
+        results += [{"strlen": strlen, "handle": handle}]
 
-    print(f.name)
+    for result in results:
+        bytes_svg = result["handle"].get()
+        with open(Path("/tmp") / f"{impl}-{result['strlen']}-results.svg", "wb") as f:
+            f.write(bytes_svg)
+
+        print(f.name)
