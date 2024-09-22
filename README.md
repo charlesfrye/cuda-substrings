@@ -7,12 +7,17 @@ The base implementation is in pure Python.
 It includes a NumPy implementation
 and a CuPy implementation that runs on NVIDIA GPUs.
 
-In our testing,
-the NumPy implementation was slower than the base implementation.
-
-The CuPy implemementation was faster than the base implementation by a factor of 8
+In our testing, on a beefy H100 node on Modal,
+the base implementation achieved ~50 OPS as measured by `pytest-benchmark`
 for input strings of size `65_536 == 2 ** 16`
 with single matches of size roughly `4_096 == 2 ** 12`.
+
+The NumPy implementation was slower than the base implementation by a factor of ~3,
+or ~15 OPS.
+
+The CuPy implemementation was faster than the base implementation by a factor of ~1.5,
+or ~80 OPS.
+Overhead was dominated by the conversion of Python
 
 ## Usage
 
