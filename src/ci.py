@@ -48,10 +48,11 @@ def benchmark(impl: str = None, strlen: int = None):
     strlen = strlen or 2**20
 
     subprocess.run(
-        ["py-spy", "record", "-o", volume_dir / impl / f"{strlen}-results.svg", "--"]
+        ["py-spy", "record", "-o", output_dir / f"{strlen}-trace.svg", "--"]
         + ["pytest"]
         + ["--impl", impl]
         + ["--benchmark-enable"]
+        + [f"--benchmark-storage={output_dir}", "--benchmark-autosave"]
         + ["tests/test_perf.py"],
         check=False,
         cwd="/root",
