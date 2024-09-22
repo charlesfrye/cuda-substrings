@@ -1,10 +1,17 @@
 # Substring Matching with Fast Fourier Transforms in O(n log n)
 
 This repo demonstrates how to use FFTs to perform substring matching in O(n log n) time.
+It is based on the algorithm in
+[Clifford and Clifford's _Simple Deterministic Wildcard Matching_](https://www.cs.cmu.edu/afs/cs/academic/class/15750-s16/Handouts/WildCards2006.pdf)
+and the implementation of it in
+[Stoian's _Faster FFT-based Wildcard Pattern Matching_](https://dl.acm.org/doi/10.1145/3555041.3589391),
+which presents a technique with a linear-factor speedup over the algorithm
+implemented here.
 
-The base implementation is in pure Python.
+The implementation of the simple O(n^2) nested-loop algorithm
+is in pure Python.
 
-It includes a NumPy implementation
+This repo also includes a NumPy implementation
 and a CuPy implementation that runs on NVIDIA GPUs.
 
 In our testing, on a beefy H100 node on Modal,
@@ -19,9 +26,10 @@ This was only intended as a reference implementation for building the CuPy imple
 
 The initial CuPy implemementation was faster than the base implementation by a factor of ~1.5,
 or ~80 OPS.
-Profiling showed that the CuPy implementation's runtime was dominated by overhead
+Profiling with `py-spy` showed that the CuPy implementation's
+runtime was dominated by overhead
 from the conversion of Python strings into ints for the FFT.
-Reading the string into CuPy from a `utf32-le` buffer relieved this bottleneck
+Reading the string into CuPy as a `utf32-le` encoded buffer relieved this bottleneck
 and boosed the OPS to >500, or >10x the speed of the base implementation.
 
 For larger strings, the superior asymptotics of the FFT-based approach
@@ -41,4 +49,13 @@ it saves an SVG file with a `py-spy` flame graph to `/tmp`.
 modal run src.ci --impl simple
 modal run src.ci --impl numpy-fft
 modal run src.ci --impl cupy-fft
+```
+
+Correctness testing is also part of writing performant code!
+Correctness tests are run with the `pytest` task:
+
+```bash
+modal run src.ci::pytest --impl simple
+modal run src.ci::pytest --impl numpy-fft
+modal run src.ci::pytest --impl cupy-fft
 ```
