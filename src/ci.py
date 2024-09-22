@@ -37,30 +37,34 @@ def pytest(impl: str = None, run_hard: bool = False):
 @app.function(
     gpu="h100", mounts=[tests], volumes={volume_dir: perf_volume}, cloud="oci"
 )
-def benchmark(impl: str = None):
+def benchmark(impl: str = None, strlen: int = None):
+    import os
     import subprocess
 
     impl = impl or "simple"
     output_dir = volume_dir / impl
     output_dir.mkdir(parents=True, exist_ok=True)
 
+    strlen = strlen or 2**20
+
     subprocess.run(
-        ["py-spy", "record", "-o", volume_dir / impl / "results.svg", "--"]
+        ["py-spy", "record", "-o", volume_dir / impl / f"{strlen}-results.svg", "--"]
         + ["pytest"]
         + ["--impl", impl]
         + ["--benchmark-enable"]
         + ["tests/test_perf.py"],
         check=False,
         cwd="/root",
+        env=os.environ | {"CUDA_SS_STRINGLEN": str(strlen)},
     )
 
     return Path(output_dir / "results.svg").read_bytes()
 
 
 @app.local_entrypoint()
-def main(impl: str = None):
-    bytes_svg = benchmark.remote(impl)
-    with open(Path("/tmp") / f"{impl}-results.svg", "wb") as f:
+def main(impl: str = None, strlen: int = None):
+    bytes_svg = benchmark.remote(impl, strlen)
+    with open(Path("/tmp") / f"{impl}-{strlen}-results.svg", "wb") as f:
         f.write(bytes_svg)
 
     print(f.name)

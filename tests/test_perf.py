@@ -1,7 +1,11 @@
+import os
 import random
 import string
 
 import pytest
+
+
+LENGTH = int(os.environ.get("CUDA_SS_STRINGLEN", 2**20))
 
 
 def on_really_long_ascii(implementation, inpt):
@@ -16,7 +20,7 @@ def on_really_long_ascii(implementation, inpt):
 
 @pytest.fixture
 def inpt():
-    random_string = "".join(random.choices(string.ascii_lowercase, k=2**20))
+    random_string = "".join(random.choices(string.ascii_lowercase, k=LENGTH))
     random_index = random.randint(len(random_string) // 4, len(random_string) // 2)
     length = (
         len(random_string) // 2
