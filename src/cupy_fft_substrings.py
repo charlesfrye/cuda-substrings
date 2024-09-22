@@ -5,6 +5,32 @@ def char_to_num(s):
     return cp.array([ord(c) if c != "." else 0 for c in s])
 
 
+def char_to_num_array(s):
+    """
+    Efficiently convert a Unicode string into a CuPy array of numerical encodings,
+    mapping '.' to 0.
+
+    Args:
+    - s (str): Input string containing Unicode characters.
+
+    Returns:
+    - cp.ndarray: CuPy array with numerical encodings of the characters.
+    """
+    # encode the string into long-endian bytes representing codepoints
+    codepoints_bytes = s.encode("utf-32le")
+
+    # create a CuPy array directly from the bytes buffer
+    codepoints = cp.frombuffer(codepoints_bytes, dtype=cp.uint32)
+
+    # map the codepoint of '.' to 0
+    codepoints[codepoints == 46] = 0
+
+    return codepoints
+
+
+char_to_num = char_to_num_array
+
+
 def checkcubesum(pattern_n):
     """Compute a check value for the pattern by summing the cube of each character's numerical encoding."""
     return cp.sum(pattern_n**3)
