@@ -32,7 +32,7 @@ Profiling with `py-spy` showed that the CuPy implementation's
 runtime was dominated by overhead
 from the conversion of Python strings into ints for the FFT.
 
-Reading the string into CuPy as a `utf32-le` encoded buffer relieved this bottleneck
+Reading the string in `utf32-le` encoding into a CuPy buffer relieved this bottleneck
 and boosed the OPS to >500, or >10x the speed of the base implementation.
 
 For larger strings, the superior asymptotics of the FFT-based approach
