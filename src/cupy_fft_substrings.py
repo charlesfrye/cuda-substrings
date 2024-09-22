@@ -2,13 +2,7 @@ import cupy as cp
 
 
 def char_to_num(s):
-    return cp.array([ord(c) if c != "." else 0 for c in s])
-
-
-def char_to_num_array(s):
-    """
-    Efficiently convert a Unicode string into a CuPy array of numerical encodings,
-    mapping '.' to 0.
+    """Convert a Unicode string into a CuPy array of codepoints, mapping '.' to 0.
 
     Args:
     - s (str): Input string containing Unicode characters.
@@ -26,9 +20,6 @@ def char_to_num_array(s):
     codepoints[codepoints == 46] = 0
 
     return codepoints
-
-
-char_to_num = char_to_num_array
 
 
 def checkcubesum(pattern_n):
